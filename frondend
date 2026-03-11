@@ -6,11 +6,13 @@
     <title>Quality Defect Tracking Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plugin for data labels -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <style>
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #fcfbf9;
-            color: #292524;
+            background-color: #f8fafc;
+            color: #1e293b;
         }
         
         .chart-container {
@@ -19,7 +21,7 @@
             max-width: 100%;
             margin-left: auto;
             margin-right: auto;
-            height: 350px;
+            height: 380px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -29,15 +31,15 @@
             height: 8px;
         }
         .table-scroll::-webkit-scrollbar-track {
-            background: #f5f5f4; 
+            background: #f1f5f9; 
             border-radius: 4px;
         }
         .table-scroll::-webkit-scrollbar-thumb {
-            background: #d6d3d1; 
+            background: #cbd5e1; 
             border-radius: 4px;
         }
         .table-scroll::-webkit-scrollbar-thumb:hover {
-            background: #a8a29e; 
+            background: #94a3b8; 
         }
 
         .badge {
@@ -58,43 +60,45 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         
-        <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-stone-200 pb-6">
+        <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
             <div>
-                <h1 class="text-3xl font-bold text-stone-900 tracking-tight mb-2">🏭 Quality Defect Tracker</h1>
-                <p class="text-stone-500 max-w-2xl">
-                    Data sourced from <strong>Quality Defect Tracking and Analysis_new.csv</strong>. Monitoring Production vs Customer defects with dashed target indicators.
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight mb-2">🏭 Quality Defect Tracker</h1>
+                <p class="text-slate-500 max-w-2xl">
+                    Data analysis for <strong>Quality Defect Tracking</strong>. Quantities are now labeled directly on the charts for better readability.
                 </p>
             </div>
             <div class="flex flex-col gap-1 min-w-[200px]">
-                <label for="monthFilter" class="text-sm font-semibold text-stone-600 uppercase tracking-wider">📅 Filter by Month</label>
-                <select id="monthFilter" class="bg-white border border-stone-300 text-stone-900 text-base rounded-lg focus:ring-amber-500 focus:border-amber-500 block w-full p-2.5 shadow-sm cursor-pointer outline-none">
+                <label for="monthFilter" class="text-sm font-semibold text-slate-600 uppercase tracking-wider">📅 Filter by Month</label>
+                <select id="monthFilter" class="bg-white border border-slate-300 text-slate-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 shadow-sm cursor-pointer outline-none transition-all">
                     <option value="All">All Months</option>
                 </select>
             </div>
         </header>
 
+        <!-- KPI Section -->
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="kpiContainer">
             <!-- Populated by JS -->
         </section>
 
+        <!-- Charts Section -->
         <section class="mb-8">
             <div class="mb-4">
-                <h2 class="text-xl font-bold text-stone-800">Volume vs. Target Threshold</h2>
-                <p class="text-stone-500 text-sm mt-1">
-                    Side-by-side bars for <strong>Production</strong> and <strong>Customer</strong> defects. The <span class="text-red-600 font-bold">--- Dashed Line</span> shows the Max Target % (Right Y-Axis).
+                <h2 class="text-xl font-bold text-slate-800">Volume vs. Target Threshold</h2>
+                <p class="text-slate-500 text-sm mt-1">
+                    Comparison of defect sources with direct quantity labels. The <span class="text-red-500 font-bold">--- Red Dash Line</span> represents the maximum quality threshold (Right Axis).
                 </p>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm lg:col-span-2 flex flex-col">
-                    <h3 class="text-sm font-bold text-stone-700 uppercase tracking-wide mb-4">Grouped Volume Analysis</h3>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm lg:col-span-2 flex flex-col">
+                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wide mb-4">Blue Theme Qty Analysis</h3>
                     <div class="chart-container flex-grow">
                         <canvas id="categoryBarChart"></canvas>
                     </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex flex-col">
-                    <h3 class="text-sm font-bold text-stone-700 uppercase tracking-wide mb-4">Overall Defect Source Mix</h3>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wide mb-4">Source Distribution</h3>
                     <div class="chart-container flex-grow">
                         <canvas id="sourcePieChart"></canvas>
                     </div>
@@ -102,25 +106,26 @@
             </div>
         </section>
 
-        <section class="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
-            <div class="p-5 border-b border-stone-100">
-                <h2 class="text-xl font-bold text-stone-800">CSV Data Records</h2>
+        <!-- Table Section -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50/50">
+                <h2 class="text-xl font-bold text-slate-800">Defect Data Log</h2>
             </div>
             <div class="table-scroll overflow-x-auto w-full">
                 <table class="w-full text-left border-collapse whitespace-nowrap">
                     <thead>
-                        <tr class="bg-stone-50 text-stone-500 text-xs uppercase tracking-wider">
-                            <th class="p-4 font-semibold border-b border-stone-200">Month</th>
-                            <th class="p-4 font-semibold border-b border-stone-200">Category</th>
-                            <th class="p-4 font-semibold border-b border-stone-200 text-right">Prod. Qty</th>
-                            <th class="p-4 font-semibold border-b border-stone-200 text-right">Cust. Qty</th>
-                            <th class="p-4 font-semibold border-b border-stone-200 text-right">Total</th>
-                            <th class="p-4 font-semibold border-b border-stone-200 text-right">Actual %</th>
-                            <th class="p-4 font-semibold border-b border-stone-200 text-right">Target %</th>
-                            <th class="p-4 font-semibold border-b border-stone-200">Status</th>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                            <th class="p-4 font-semibold border-b border-slate-200">Month</th>
+                            <th class="p-4 font-semibold border-b border-slate-200">Category</th>
+                            <th class="p-4 font-semibold border-b border-slate-200 text-right">Prod. Qty</th>
+                            <th class="p-4 font-semibold border-b border-slate-200 text-right">Cust. Qty</th>
+                            <th class="p-4 font-semibold border-b border-slate-200 text-right">Total</th>
+                            <th class="p-4 font-semibold border-b border-slate-200 text-right">Actual %</th>
+                            <th class="p-4 font-semibold border-b border-slate-200 text-right">Target %</th>
+                            <th class="p-4 font-semibold border-b border-slate-200">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="dataTableBody" class="text-sm text-stone-700 divide-y divide-stone-100">
+                    <tbody id="dataTableBody" class="text-sm text-slate-700 divide-y divide-slate-100">
                         <!-- Populated by JS -->
                     </tbody>
                 </table>
@@ -129,7 +134,10 @@
     </div>
 
     <script>
-        // Data derived directly from uploaded CSV: Quality Defect Tracking and Analysis_new.csv
+        // Register the datalabels plugin globally
+        Chart.register(ChartDataLabels);
+
+        // Data derived from Quality Defect Tracking and Analysis_new.csv
         const rawData = [
             { month: "Jan", category: "Bubbles", prodQty: 45, custQty: 2, totalQty: 47, actualPct: 43.12, targetPct: 5.00, status: "Critical" },
             { month: "Jan", category: "Scratches", prodQty: 12, custQty: 8, totalQty: 20, actualPct: 18.35, targetPct: 12.00, status: "Over" },
@@ -150,6 +158,13 @@
 
         let barChartInstance = null;
         let pieChartInstance = null;
+
+        const THEME = {
+            primary: '#2563eb',   // blue-600
+            secondary: '#93c5fd', // blue-300
+            target: '#ef4444',    // red-500
+            grid: '#f1f5f9'
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
             initializeFilter();
@@ -193,21 +208,21 @@
             });
 
             container.innerHTML = `
-                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center text-xl">📦</div>
-                    <div><p class="text-sm font-medium text-stone-500">Total Defects</p><p class="text-2xl font-bold text-stone-900">${totalDefects}</p></div>
+                <div class="bg-blue-50 p-5 rounded-xl border border-blue-100 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl">📦</div>
+                    <div><p class="text-sm font-medium text-blue-600">Total Defects</p><p class="text-2xl font-bold text-slate-900">${totalDefects}</p></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex items-center gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-xl">⚠️</div>
-                    <div><p class="text-sm font-medium text-stone-500">Critical</p><p class="text-2xl font-bold text-red-700">${criticalCount}</p></div>
+                    <div><p class="text-sm font-medium text-slate-500">Critical</p><p class="text-2xl font-bold text-red-600">${criticalCount}</p></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex items-center gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center text-xl">📈</div>
-                    <div><p class="text-sm font-medium text-stone-500">Over Target</p><p class="text-2xl font-bold text-orange-700">${overCount}</p></div>
+                    <div><p class="text-sm font-medium text-slate-500">Over Target</p><p class="text-2xl font-bold text-orange-600">${overCount}</p></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-xl">✅</div>
-                    <div><p class="text-sm font-medium text-stone-500">Target OK</p><p class="text-2xl font-bold text-green-700">${okCount}</p></div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-xl">✅</div>
+                    <div><p class="text-sm font-medium text-slate-500">Target OK</p><p class="text-2xl font-bold text-emerald-600">${okCount}</p></div>
                 </div>
             `;
         }
@@ -219,19 +234,18 @@
             state.filteredData.forEach(row => {
                 const statusNorm = row.status.toUpperCase();
                 let badgeClass = statusNorm === 'CRITICAL' ? 'badge-critical' : (statusNorm === 'OVER' ? 'badge-over' : 'badge-ok');
-                let statusPrefix = statusNorm === 'CRITICAL' ? '🔴 ' : (statusNorm === 'OVER' ? '🟡 ' : '🟢 ');
                 
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-stone-50 transition-colors';
+                tr.className = 'hover:bg-slate-50 transition-colors';
                 tr.innerHTML = `
-                    <td class="p-4 font-medium text-stone-900">${row.month}</td>
-                    <td class="p-4 text-stone-800">${row.category}</td>
-                    <td class="p-4 text-right text-stone-600">${row.prodQty}</td>
-                    <td class="p-4 text-right text-stone-600">${row.custQty}</td>
-                    <td class="p-4 text-right font-bold text-stone-800">${row.totalQty}</td>
-                    <td class="p-4 text-right font-medium ${row.actualPct > row.targetPct ? 'text-red-600' : 'text-stone-800'}">${row.actualPct.toFixed(2)}%</td>
-                    <td class="p-4 text-right text-stone-500 font-bold">${row.targetPct.toFixed(2)}%</td>
-                    <td class="p-4"><span class="badge ${badgeClass}">${statusPrefix}${row.status}</span></td>
+                    <td class="p-4 font-medium text-slate-900">${row.month}</td>
+                    <td class="p-4 text-slate-800">${row.category}</td>
+                    <td class="p-4 text-right text-slate-600">${row.prodQty}</td>
+                    <td class="p-4 text-right text-slate-600">${row.custQty}</td>
+                    <td class="p-4 text-right font-bold text-slate-800">${row.totalQty}</td>
+                    <td class="p-4 text-right font-medium ${row.actualPct > row.targetPct ? 'text-red-600' : 'text-slate-800'}">${row.actualPct.toFixed(2)}%</td>
+                    <td class="p-4 text-right text-slate-500 font-bold">${row.targetPct.toFixed(2)}%</td>
+                    <td class="p-4"><span class="badge ${badgeClass}">${row.status}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -253,7 +267,7 @@
             });
 
             for (const [cat, val] of Object.entries(aggregated)) {
-                categoryLabels.push(cat.length > 15 ? cat.substring(0, 12) + '...' : cat);
+                categoryLabels.push(cat.length > 18 ? cat.substring(0, 15) + '...' : cat);
                 prodData.push(val.prod);
                 custData.push(val.cust);
                 targetData.push(val.target);
@@ -275,48 +289,65 @@
                             { 
                                 label: 'Production', 
                                 data: prodData, 
-                                backgroundColor: '#94a3b8', 
+                                backgroundColor: THEME.primary, 
                                 borderRadius: 4,
-                                yAxisID: 'y' 
+                                yAxisID: 'y',
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'top',
+                                    offset: 4,
+                                    color: '#1e293b',
+                                    font: { weight: 'bold', size: 10 }
+                                }
                             },
                             { 
                                 label: 'Customer', 
                                 data: custData, 
-                                backgroundColor: '#fbbf24', 
+                                backgroundColor: THEME.secondary, 
                                 borderRadius: 4,
-                                yAxisID: 'y' 
+                                yAxisID: 'y',
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'top',
+                                    offset: 4,
+                                    color: '#475569',
+                                    font: { weight: 'bold', size: 10 }
+                                }
                             },
                             { 
                                 label: 'Max Target %', 
                                 data: targetData, 
                                 type: 'line', 
-                                borderColor: '#ef4444', 
+                                borderColor: THEME.target, 
                                 borderWidth: 3, 
-                                pointBackgroundColor: '#ef4444',
-                                borderDash: [5, 5], // [Dash length, Gap length]
+                                pointBackgroundColor: THEME.target,
+                                borderDash: [6, 4],
                                 tension: 0.1, 
                                 yAxisID: 'y1',
                                 fill: false,
-                                order: -1
+                                order: -1,
+                                datalabels: { display: false } // Hide labels for target line
                             }
                         ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        layout: { padding: { top: 25 } },
                         plugins: { 
-                            legend: { position: 'bottom', labels: { usePointStyle: true } }
+                            legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
+                            tooltip: { enabled: true }
                         },
                         scales: {
                             y: { 
                                 beginAtZero: true, 
-                                title: { display: true, text: 'Defect Qty', color: '#78716c' },
-                                grid: { color: '#f5f5f4' }
+                                title: { display: true, text: 'Defect Qty', color: '#64748b' },
+                                grid: { color: THEME.grid }
                             },
                             y1: { 
                                 beginAtZero: true, 
                                 position: 'right', 
-                                title: { display: true, text: 'Target Threshold %', color: '#ef4444' },
+                                title: { display: true, text: 'Threshold %', color: THEME.target },
                                 grid: { drawOnChartArea: false },
                                 ticks: { callback: function(value) { return value + '%'; } }
                             },
@@ -337,17 +368,29 @@
                         labels: ['Production', 'Customer'],
                         datasets: [{ 
                             data: [totalProd, totalCust], 
-                            backgroundColor: ['#94a3b8', '#fbbf24'], 
-                            borderWidth: 0,
-                            hoverOffset: 6 
+                            backgroundColor: [THEME.primary, THEME.secondary], 
+                            borderWidth: 4,
+                            borderColor: '#ffffff',
+                            hoverOffset: 10 
                         }]
                     },
                     options: { 
                         responsive: true, 
                         maintainAspectRatio: false, 
-                        cutout: '75%', 
+                        cutout: '70%', 
                         plugins: { 
-                            legend: { position: 'bottom', labels: { usePointStyle: true } } 
+                            legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
+                            datalabels: {
+                                color: '#fff',
+                                font: { weight: 'bold', size: 12 },
+                                formatter: (value, ctx) => {
+                                    let sum = 0;
+                                    let dataArr = ctx.chart.data.datasets[0].data;
+                                    dataArr.map(data => { sum += data; });
+                                    let percentage = (value*100 / sum).toFixed(0)+"%";
+                                    return value + "\n(" + percentage + ")";
+                                }
+                            }
                         } 
                     }
                 });
