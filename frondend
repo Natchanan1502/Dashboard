@@ -19,16 +19,10 @@
             max-width: 100%;
             margin-left: auto;
             margin-right: auto;
-            height: 300px;
-            max-height: 400px;
+            height: 350px;
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
-            }
         }
 
         .table-scroll::-webkit-scrollbar {
@@ -62,23 +56,13 @@
 </head>
 <body class="antialiased min-h-screen pb-12">
 
-    <!-- Chosen Palette: Warm Neutrals with Semantic Accents -->
-    <!-- Application Structure Plan: A single-page dashboard layout. Key update: Modified the main visualization from a stacked bar to a double (grouped) bar chart. This allows side-by-side comparison of Production vs Customer volumes while maintaining the Target % line for performance context. -->
-    <!-- Visualization & Content Choices: 
-         1. KPIs (HTML/CSS): High-level count summaries.
-         2. Grouped Bar + Line Chart (Chart.js): Double bars show absolute counts per source. Line shows percentage threshold on the right Y-axis.
-         3. Doughnut Chart (Chart.js): Relative distribution of source types.
-         4. Data Table (HTML): Detailed data log.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         
         <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-stone-200 pb-6">
             <div>
                 <h1 class="text-3xl font-bold text-stone-900 tracking-tight mb-2">🏭 Quality Defect Tracker</h1>
                 <p class="text-stone-500 max-w-2xl">
-                    Side-by-side analysis of production and customer defects compared against maximum allowable targets.
+                    Data sourced from <strong>Quality Defect Tracking and Analysis_new.csv</strong>. Monitoring Production vs Customer defects with dashed target indicators.
                 </p>
             </div>
             <div class="flex flex-col gap-1 min-w-[200px]">
@@ -95,22 +79,22 @@
 
         <section class="mb-8">
             <div class="mb-4">
-                <h2 class="text-xl font-bold text-stone-800">Defect Volume Comparison</h2>
+                <h2 class="text-xl font-bold text-stone-800">Volume vs. Target Threshold</h2>
                 <p class="text-stone-500 text-sm mt-1">
-                    Grouped bars allow you to compare Production vs Customer quantities for each category. The red line maps to the Target % threshold (Right Axis).
+                    Side-by-side bars for <strong>Production</strong> and <strong>Customer</strong> defects. The <span class="text-red-600 font-bold">--- Dashed Line</span> shows the Max Target % (Right Y-Axis).
                 </p>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm lg:col-span-2 flex flex-col">
-                    <h3 class="text-sm font-bold text-stone-700 uppercase tracking-wide mb-4">Quantity vs. Target %</h3>
+                    <h3 class="text-sm font-bold text-stone-700 uppercase tracking-wide mb-4">Grouped Volume Analysis</h3>
                     <div class="chart-container flex-grow">
                         <canvas id="categoryBarChart"></canvas>
                     </div>
                 </div>
 
                 <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex flex-col">
-                    <h3 class="text-sm font-bold text-stone-700 uppercase tracking-wide mb-4">Total Source Mix</h3>
+                    <h3 class="text-sm font-bold text-stone-700 uppercase tracking-wide mb-4">Overall Defect Source Mix</h3>
                     <div class="chart-container flex-grow">
                         <canvas id="sourcePieChart"></canvas>
                     </div>
@@ -120,7 +104,7 @@
 
         <section class="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
             <div class="p-5 border-b border-stone-100">
-                <h2 class="text-xl font-bold text-stone-800">Detailed Metric Log</h2>
+                <h2 class="text-xl font-bold text-stone-800">CSV Data Records</h2>
             </div>
             <div class="table-scroll overflow-x-auto w-full">
                 <table class="w-full text-left border-collapse whitespace-nowrap">
@@ -145,12 +129,18 @@
     </div>
 
     <script>
+        // Data derived directly from uploaded CSV: Quality Defect Tracking and Analysis_new.csv
         const rawData = [
-            { month: "Jan", category: "Bubbles", prodQty: 45, custQty: 2, totalQty: 47, actualPct: 31.76, targetPct: 3.00, status: "🔴 OVER", rawStatus: "OVER" },
-            { month: "Jan", category: "Scratches", prodQty: 12, custQty: 8, totalQty: 20, actualPct: 13.51, targetPct: 1.50, status: "🔴 OVER", rawStatus: "OVER" },
-            { month: "Jan", category: "Cateer", prodQty: 80, custQty: 1, totalQty: 81, actualPct: 54.73, targetPct: 0.50, status: "🔴 CRITICAL", rawStatus: "CRITICAL" },
-            { month: "Feb", category: "Bluetooth Connection Issue", prodQty: 5, custQty: 12, totalQty: 17, actualPct: 80.95, targetPct: 1.00, status: "🔴 OVER", rawStatus: "OVER" },
-            { month: "Feb", category: "Distortion", prodQty: 4, custQty: 0, totalQty: 4, actualPct: 19.05, targetPct: 2.00, status: "🟢 OK", rawStatus: "OK" }
+            { month: "Jan", category: "Bubbles", prodQty: 45, custQty: 2, totalQty: 47, actualPct: 43.12, targetPct: 5.00, status: "Critical" },
+            { month: "Jan", category: "Scratches", prodQty: 12, custQty: 8, totalQty: 20, actualPct: 18.35, targetPct: 12.00, status: "Over" },
+            { month: "Jan", category: "Cateer", prodQty: 20, custQty: 1, totalQty: 21, actualPct: 19.27, targetPct: 5.00, status: "Over" },
+            { month: "Jan", category: "Bluetooth Connection Issue", prodQty: 5, custQty: 12, totalQty: 17, actualPct: 15.60, targetPct: 7.00, status: "Over" },
+            { month: "Jan", category: "Distortion", prodQty: 4, custQty: 0, totalQty: 4, actualPct: 3.67, targetPct: 10.00, status: "OK" },
+            { month: "Feb", category: "Bubbles", prodQty: 10, custQty: 20, totalQty: 30, actualPct: 13.70, targetPct: 5.00, status: "Over" },
+            { month: "Feb", category: "Scratches", prodQty: 2, custQty: 1, totalQty: 3, actualPct: 1.37, targetPct: 12.00, status: "OK" },
+            { month: "Feb", category: "Cateer", prodQty: 40, custQty: 60, totalQty: 100, actualPct: 45.66, targetPct: 5.00, status: "Critical" },
+            { month: "Feb", category: "Bluetooth Connection Issue", prodQty: 30, custQty: 50, totalQty: 80, actualPct: 36.53, targetPct: 7.00, status: "Critical" },
+            { month: "Feb", category: "Distortion", prodQty: 5, custQty: 1, totalQty: 6, actualPct: 2.74, targetPct: 10.00, status: "OK" }
         ];
 
         const state = {
@@ -197,9 +187,9 @@
 
             state.filteredData.forEach(item => {
                 totalDefects += item.totalQty;
-                if (item.rawStatus === 'CRITICAL') criticalCount++;
-                if (item.rawStatus === 'OVER') overCount++;
-                if (item.rawStatus === 'OK') okCount++;
+                if (item.status === 'Critical') criticalCount++;
+                if (item.status === 'Over') overCount++;
+                if (item.status === 'OK') okCount++;
             });
 
             container.innerHTML = `
@@ -224,12 +214,13 @@
 
         function renderTable() {
             const tbody = document.getElementById('dataTableBody');
-            tbody.innerHTML = state.filteredData.length === 0 
-                ? '<tr><td colspan="8" class="p-8 text-center text-stone-500">No data available.</td></tr>' 
-                : '';
+            tbody.innerHTML = '';
 
             state.filteredData.forEach(row => {
-                let badgeClass = row.rawStatus === 'CRITICAL' ? 'badge-critical' : (row.rawStatus === 'OVER' ? 'badge-over' : 'badge-ok');
+                const statusNorm = row.status.toUpperCase();
+                let badgeClass = statusNorm === 'CRITICAL' ? 'badge-critical' : (statusNorm === 'OVER' ? 'badge-over' : 'badge-ok');
+                let statusPrefix = statusNorm === 'CRITICAL' ? '🔴 ' : (statusNorm === 'OVER' ? '🟡 ' : '🟢 ');
+                
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-stone-50 transition-colors';
                 tr.innerHTML = `
@@ -240,7 +231,7 @@
                     <td class="p-4 text-right font-bold text-stone-800">${row.totalQty}</td>
                     <td class="p-4 text-right font-medium ${row.actualPct > row.targetPct ? 'text-red-600' : 'text-stone-800'}">${row.actualPct.toFixed(2)}%</td>
                     <td class="p-4 text-right text-stone-500 font-bold">${row.targetPct.toFixed(2)}%</td>
-                    <td class="p-4"><span class="badge ${badgeClass}">${row.status}</span></td>
+                    <td class="p-4"><span class="badge ${badgeClass}">${statusPrefix}${row.status}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -302,10 +293,11 @@
                                 borderColor: '#ef4444', 
                                 borderWidth: 3, 
                                 pointBackgroundColor: '#ef4444',
+                                borderDash: [5, 5], // [Dash length, Gap length]
                                 tension: 0.1, 
                                 yAxisID: 'y1',
                                 fill: false,
-                                order: -1 // Keep line on top
+                                order: -1
                             }
                         ]
                     },
@@ -324,15 +316,11 @@
                             y1: { 
                                 beginAtZero: true, 
                                 position: 'right', 
-                                title: { display: true, text: 'Target %', color: '#ef4444' },
+                                title: { display: true, text: 'Target Threshold %', color: '#ef4444' },
                                 grid: { drawOnChartArea: false },
-                                ticks: {
-                                    callback: function(value) { return value + '%'; }
-                                }
+                                ticks: { callback: function(value) { return value + '%'; } }
                             },
-                            x: {
-                                grid: { display: false }
-                            }
+                            x: { grid: { display: false } }
                         }
                     }
                 });
@@ -351,7 +339,7 @@
                             data: [totalProd, totalCust], 
                             backgroundColor: ['#94a3b8', '#fbbf24'], 
                             borderWidth: 0,
-                            hoverOffset: 4 
+                            hoverOffset: 6 
                         }]
                     },
                     options: { 
