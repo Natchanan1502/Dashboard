@@ -21,7 +21,7 @@
             max-width: 100%;
             margin-left: auto;
             margin-right: auto;
-            height: 380px;
+            height: 420px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -64,7 +64,7 @@
             <div>
                 <h1 class="text-3xl font-bold text-slate-900 tracking-tight mb-2">🏭 Quality Defect Tracker</h1>
                 <p class="text-slate-500 max-w-2xl">
-                    Data analysis for <strong>Quality Defect Tracking</strong>. Quantities are now labeled directly on the charts for better readability.
+                    Data analysis for <strong>Quality Defect Tracking</strong>. Full-width comparison of defect volumes against target thresholds.
                 </p>
             </div>
             <div class="flex flex-col gap-1 min-w-[200px]">
@@ -89,19 +89,10 @@
                 </p>
             </div>
             
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm lg:col-span-2 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wide mb-4">Blue Theme Qty Analysis</h3>
-                    <div class="chart-container flex-grow">
-                        <canvas id="categoryBarChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wide mb-4">Source Distribution</h3>
-                    <div class="chart-container flex-grow">
-                        <canvas id="sourcePieChart"></canvas>
-                    </div>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col w-full">
+                <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wide mb-4">Defect Qty VS Target</h3>
+                <div class="chart-container flex-grow">
+                    <canvas id="categoryBarChart"></canvas>
                 </div>
             </div>
         </section>
@@ -134,10 +125,8 @@
     </div>
 
     <script>
-        // Register the datalabels plugin globally
         Chart.register(ChartDataLabels);
 
-        // Data derived from Quality Defect Tracking and Analysis_new.csv
         const rawData = [
             { month: "Jan", category: "Bubbles", prodQty: 45, custQty: 2, totalQty: 47, actualPct: 43.12, targetPct: 5.00, status: "Critical" },
             { month: "Jan", category: "Scratches", prodQty: 12, custQty: 8, totalQty: 20, actualPct: 18.35, targetPct: 12.00, status: "Over" },
@@ -157,12 +146,11 @@
         };
 
         let barChartInstance = null;
-        let pieChartInstance = null;
 
         const THEME = {
-            primary: '#2563eb',   // blue-600
-            secondary: '#93c5fd', // blue-300
-            target: '#ef4444',    // red-500
+            primary: '#2563eb',
+            secondary: '#93c5fd',
+            target: '#ef4444',
             grid: '#f1f5f9'
         };
 
@@ -256,18 +244,16 @@
             const prodData = [];
             const custData = [];
             const targetData = [];
-            let totalProd = 0, totalCust = 0;
 
             const aggregated = {};
             state.filteredData.forEach(item => {
-                totalProd += item.prodQty; totalCust += item.custQty;
                 if (!aggregated[item.category]) aggregated[item.category] = { prod: 0, cust: 0, target: item.targetPct };
                 aggregated[item.category].prod += item.prodQty;
                 aggregated[item.category].cust += item.custQty;
             });
 
             for (const [cat, val] of Object.entries(aggregated)) {
-                categoryLabels.push(cat.length > 18 ? cat.substring(0, 15) + '...' : cat);
+                categoryLabels.push(cat.length > 25 ? cat.substring(0, 22) + '...' : cat);
                 prodData.push(val.prod);
                 custData.push(val.cust);
                 targetData.push(val.target);
@@ -287,7 +273,7 @@
                         labels: categoryLabels,
                         datasets: [
                             { 
-                                label: 'Production', 
+                                label: 'Production Defect', 
                                 data: prodData, 
                                 backgroundColor: THEME.primary, 
                                 borderRadius: 4,
@@ -297,11 +283,11 @@
                                     align: 'top',
                                     offset: 4,
                                     color: '#1e293b',
-                                    font: { weight: 'bold', size: 10 }
+                                    font: { weight: 'bold', size: 11 }
                                 }
                             },
                             { 
-                                label: 'Customer', 
+                                label: 'Customer Defect', 
                                 data: custData, 
                                 backgroundColor: THEME.secondary, 
                                 borderRadius: 4,
@@ -311,11 +297,11 @@
                                     align: 'top',
                                     offset: 4,
                                     color: '#475569',
-                                    font: { weight: 'bold', size: 10 }
+                                    font: { weight: 'bold', size: 11 }
                                 }
                             },
                             { 
-                                label: 'Max Target %', 
+                                label: 'Max Target Threshold %', 
                                 data: targetData, 
                                 type: 'line', 
                                 borderColor: THEME.target, 
@@ -326,16 +312,16 @@
                                 yAxisID: 'y1',
                                 fill: false,
                                 order: -1,
-                                datalabels: { display: false } // Hide labels for target line
+                                datalabels: { display: false }
                             }
                         ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        layout: { padding: { top: 25 } },
+                        layout: { padding: { top: 30 } },
                         plugins: { 
-                            legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
+                            legend: { position: 'bottom', labels: { usePointStyle: true, padding: 25 } },
                             tooltip: { enabled: true }
                         },
                         scales: {
@@ -351,47 +337,11 @@
                                 grid: { drawOnChartArea: false },
                                 ticks: { callback: function(value) { return value + '%'; } }
                             },
-                            x: { grid: { display: false } }
-                        }
-                    }
-                });
-            }
-
-            const pieCtx = document.getElementById('sourcePieChart').getContext('2d');
-            if (pieChartInstance) {
-                pieChartInstance.data.datasets[0].data = [totalProd, totalCust];
-                pieChartInstance.update();
-            } else {
-                pieChartInstance = new Chart(pieCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Production', 'Customer'],
-                        datasets: [{ 
-                            data: [totalProd, totalCust], 
-                            backgroundColor: [THEME.primary, THEME.secondary], 
-                            borderWidth: 4,
-                            borderColor: '#ffffff',
-                            hoverOffset: 10 
-                        }]
-                    },
-                    options: { 
-                        responsive: true, 
-                        maintainAspectRatio: false, 
-                        cutout: '70%', 
-                        plugins: { 
-                            legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } },
-                            datalabels: {
-                                color: '#fff',
-                                font: { weight: 'bold', size: 12 },
-                                formatter: (value, ctx) => {
-                                    let sum = 0;
-                                    let dataArr = ctx.chart.data.datasets[0].data;
-                                    dataArr.map(data => { sum += data; });
-                                    let percentage = (value*100 / sum).toFixed(0)+"%";
-                                    return value + "\n(" + percentage + ")";
-                                }
+                            x: { 
+                                grid: { display: false },
+                                ticks: { font: { weight: '600' } }
                             }
-                        } 
+                        }
                     }
                 });
             }
