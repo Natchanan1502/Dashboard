@@ -11,8 +11,8 @@
     <style>
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
+            background-color: #000000;
+            color: #e2e8f0;
         }
         
         .chart-container {
@@ -31,15 +31,20 @@
             height: 8px;
         }
         .table-scroll::-webkit-scrollbar-track {
-            background: #f1f5f9; 
+            background: #1e293b; 
             border-radius: 4px;
         }
         .table-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
+            background: #475569; 
             border-radius: 4px;
         }
         .table-scroll::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
+            background: #64748b; 
+        }
+
+        .dark-card {
+            background-color: #111111;
+            border: 1px solid #333333;
         }
 
         .badge {
@@ -51,25 +56,25 @@
             font-weight: 600;
             white-space: nowrap;
         }
-        .badge-critical { background-color: #fee2e2; color: #991b1b; }
-        .badge-over { background-color: #ffedd5; color: #9a3412; }
-        .badge-ok { background-color: #dcfce3; color: #166534; }
+        .badge-critical { background-color: #7f1d1d; color: #fecaca; }
+        .badge-over { background-color: #7c2d12; color: #fed7aa; }
+        .badge-ok { background-color: #064e3b; color: #d1fae5; }
     </style>
 </head>
 <body class="antialiased min-h-screen pb-12">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         
-        <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+        <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-zinc-800 pb-6">
             <div>
-                <h1 class="text-3xl font-bold text-slate-900 tracking-tight mb-2">🏭 Quality Defect Tracker</h1>
-                <p class="text-slate-500 max-w-2xl">
-                    Data analysis for <strong>Quality Defect Tracking</strong>. Full-width comparison of defect volumes against target thresholds.
+                <h1 class="text-3xl font-bold text-white tracking-tight mb-2">🏭 Quality Defect Tracker</h1>
+                <p class="text-zinc-400 max-w-2xl">
+                    Data analysis for <strong>Quality Defect Tracking</strong>. Full-width comparison of defect volumes against target thresholds in dark mode.
                 </p>
             </div>
             <div class="flex flex-col gap-1 min-w-[200px]">
-                <label for="monthFilter" class="text-sm font-semibold text-slate-600 uppercase tracking-wider">📅 Filter by Month</label>
-                <select id="monthFilter" class="bg-white border border-slate-300 text-slate-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 shadow-sm cursor-pointer outline-none transition-all">
+                <label for="monthFilter" class="text-sm font-semibold text-zinc-500 uppercase tracking-wider">📅 Filter by Month</label>
+                <select id="monthFilter" class="bg-zinc-900 border border-zinc-700 text-white text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 shadow-sm cursor-pointer outline-none transition-all">
                     <option value="All">All Months</option>
                 </select>
             </div>
@@ -83,14 +88,14 @@
         <!-- Charts Section -->
         <section class="mb-8">
             <div class="mb-4">
-                <h2 class="text-xl font-bold text-slate-800">Volume vs. Target Threshold</h2>
-                <p class="text-slate-500 text-sm mt-1">
-                    Comparison of defect sources with direct quantity labels. The <span class="text-red-500 font-bold">--- Red Dash Line</span> represents the maximum quality threshold (Right Axis).
+                <h2 class="text-xl font-bold text-zinc-100">Volume vs. Target Threshold</h2>
+                <p class="text-zinc-500 text-sm mt-1">
+                    Comparison of defect sources with direct quantity labels. The <span class="text-red-400 font-bold">--- Red Dash Line</span> represents the maximum quality threshold (Right Axis).
                 </p>
             </div>
             
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col w-full">
-                <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wide mb-4">Defect Qty VS Target</h3>
+            <div class="dark-card p-5 rounded-xl shadow-sm flex flex-col w-full">
+                <h3 class="text-sm font-bold text-zinc-400 uppercase tracking-wide mb-4">Defect Qty VS Target</h3>
                 <div class="chart-container flex-grow">
                     <canvas id="categoryBarChart"></canvas>
                 </div>
@@ -98,25 +103,25 @@
         </section>
 
         <!-- Table Section -->
-        <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="p-5 border-b border-slate-100 bg-slate-50/50">
-                <h2 class="text-xl font-bold text-slate-800">Defect Data Log</h2>
+        <section class="dark-card rounded-xl shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-zinc-800 bg-zinc-900/50">
+                <h2 class="text-xl font-bold text-zinc-100">Defect Data Log</h2>
             </div>
             <div class="table-scroll overflow-x-auto w-full">
                 <table class="w-full text-left border-collapse whitespace-nowrap">
                     <thead>
-                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
-                            <th class="p-4 font-semibold border-b border-slate-200">Month</th>
-                            <th class="p-4 font-semibold border-b border-slate-200">Category</th>
-                            <th class="p-4 font-semibold border-b border-slate-200 text-right">Prod. Qty</th>
-                            <th class="p-4 font-semibold border-b border-slate-200 text-right">Cust. Qty</th>
-                            <th class="p-4 font-semibold border-b border-slate-200 text-right">Total</th>
-                            <th class="p-4 font-semibold border-b border-slate-200 text-right">Actual %</th>
-                            <th class="p-4 font-semibold border-b border-slate-200 text-right">Target %</th>
-                            <th class="p-4 font-semibold border-b border-slate-200">Status</th>
+                        <tr class="bg-zinc-900 text-zinc-500 text-xs uppercase tracking-wider">
+                            <th class="p-4 font-semibold border-b border-zinc-800">Month</th>
+                            <th class="p-4 font-semibold border-b border-zinc-800">Category</th>
+                            <th class="p-4 font-semibold border-b border-zinc-800 text-right">Prod. Qty</th>
+                            <th class="p-4 font-semibold border-b border-zinc-800 text-right">Cust. Qty</th>
+                            <th class="p-4 font-semibold border-b border-zinc-800 text-right">Total</th>
+                            <th class="p-4 font-semibold border-b border-zinc-800 text-right">Actual %</th>
+                            <th class="p-4 font-semibold border-b border-zinc-800 text-right">Target %</th>
+                            <th class="p-4 font-semibold border-b border-zinc-800">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="dataTableBody" class="text-sm text-slate-700 divide-y divide-slate-100">
+                    <tbody id="dataTableBody" class="text-sm text-zinc-300 divide-y divide-zinc-800">
                         <!-- Populated by JS -->
                     </tbody>
                 </table>
@@ -148,10 +153,11 @@
         let barChartInstance = null;
 
         const THEME = {
-            primary: '#2563eb',
-            secondary: '#93c5fd',
-            target: '#ef4444',
-            grid: '#f1f5f9'
+            primary: '#3b82f6',   // blue-500
+            secondary: '#60a5fa', // blue-400
+            target: '#f87171',    // red-400
+            grid: '#333333',
+            text: '#94a3b8'
         };
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -196,21 +202,21 @@
             });
 
             container.innerHTML = `
-                <div class="bg-blue-50 p-5 rounded-xl border border-blue-100 shadow-sm flex items-center gap-4">
+                <div class="bg-blue-900/20 p-5 rounded-xl border border-blue-900/50 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl">📦</div>
-                    <div><p class="text-sm font-medium text-blue-600">Total Defects</p><p class="text-2xl font-bold text-slate-900">${totalDefects}</p></div>
+                    <div><p class="text-sm font-medium text-blue-400">Total Defects</p><p class="text-2xl font-bold text-white">${totalDefects}</p></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-xl">⚠️</div>
-                    <div><p class="text-sm font-medium text-slate-500">Critical</p><p class="text-2xl font-bold text-red-600">${criticalCount}</p></div>
+                <div class="dark-card p-5 rounded-xl shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-red-900/30 flex items-center justify-center text-xl">⚠️</div>
+                    <div><p class="text-sm font-medium text-zinc-500">Critical</p><p class="text-2xl font-bold text-red-500">${criticalCount}</p></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center text-xl">📈</div>
-                    <div><p class="text-sm font-medium text-slate-500">Over Target</p><p class="text-2xl font-bold text-orange-600">${overCount}</p></div>
+                <div class="dark-card p-5 rounded-xl shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-orange-900/30 flex items-center justify-center text-xl">📈</div>
+                    <div><p class="text-sm font-medium text-zinc-500">Over Target</p><p class="text-2xl font-bold text-orange-500">${overCount}</p></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-xl">✅</div>
-                    <div><p class="text-sm font-medium text-slate-500">Target OK</p><p class="text-2xl font-bold text-emerald-600">${okCount}</p></div>
+                <div class="dark-card p-5 rounded-xl shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-emerald-900/30 flex items-center justify-center text-xl">✅</div>
+                    <div><p class="text-sm font-medium text-zinc-500">Target OK</p><p class="text-2xl font-bold text-emerald-500">${okCount}</p></div>
                 </div>
             `;
         }
@@ -224,15 +230,15 @@
                 let badgeClass = statusNorm === 'CRITICAL' ? 'badge-critical' : (statusNorm === 'OVER' ? 'badge-over' : 'badge-ok');
                 
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50 transition-colors';
+                tr.className = 'hover:bg-zinc-900 transition-colors';
                 tr.innerHTML = `
-                    <td class="p-4 font-medium text-slate-900">${row.month}</td>
-                    <td class="p-4 text-slate-800">${row.category}</td>
-                    <td class="p-4 text-right text-slate-600">${row.prodQty}</td>
-                    <td class="p-4 text-right text-slate-600">${row.custQty}</td>
-                    <td class="p-4 text-right font-bold text-slate-800">${row.totalQty}</td>
-                    <td class="p-4 text-right font-medium ${row.actualPct > row.targetPct ? 'text-red-600' : 'text-slate-800'}">${row.actualPct.toFixed(2)}%</td>
-                    <td class="p-4 text-right text-slate-500 font-bold">${row.targetPct.toFixed(2)}%</td>
+                    <td class="p-4 font-medium text-zinc-100">${row.month}</td>
+                    <td class="p-4 text-zinc-300">${row.category}</td>
+                    <td class="p-4 text-right text-zinc-400">${row.prodQty}</td>
+                    <td class="p-4 text-right text-zinc-400">${row.custQty}</td>
+                    <td class="p-4 text-right font-bold text-zinc-100">${row.totalQty}</td>
+                    <td class="p-4 text-right font-medium ${row.actualPct > row.targetPct ? 'text-red-400' : 'text-zinc-200'}">${row.actualPct.toFixed(2)}%</td>
+                    <td class="p-4 text-right text-zinc-500 font-bold">${row.targetPct.toFixed(2)}%</td>
                     <td class="p-4"><span class="badge ${badgeClass}">${row.status}</span></td>
                 `;
                 tbody.appendChild(tr);
@@ -282,7 +288,7 @@
                                     anchor: 'end',
                                     align: 'top',
                                     offset: 4,
-                                    color: '#1e293b',
+                                    color: '#ffffff',
                                     font: { weight: 'bold', size: 11 }
                                 }
                             },
@@ -296,7 +302,7 @@
                                     anchor: 'end',
                                     align: 'top',
                                     offset: 4,
-                                    color: '#475569',
+                                    color: '#cbd5e1',
                                     font: { weight: 'bold', size: 11 }
                                 }
                             },
@@ -321,25 +327,39 @@
                         maintainAspectRatio: false,
                         layout: { padding: { top: 30 } },
                         plugins: { 
-                            legend: { position: 'bottom', labels: { usePointStyle: true, padding: 25 } },
+                            legend: { 
+                                position: 'bottom', 
+                                labels: { 
+                                    usePointStyle: true, 
+                                    padding: 25,
+                                    color: '#cbd5e1'
+                                } 
+                            },
                             tooltip: { enabled: true }
                         },
                         scales: {
                             y: { 
                                 beginAtZero: true, 
-                                title: { display: true, text: 'Defect Qty', color: '#64748b' },
-                                grid: { color: THEME.grid }
+                                title: { display: true, text: 'Defect Qty', color: THEME.text },
+                                grid: { color: THEME.grid },
+                                ticks: { color: THEME.text }
                             },
                             y1: { 
                                 beginAtZero: true, 
                                 position: 'right', 
                                 title: { display: true, text: 'Threshold %', color: THEME.target },
                                 grid: { drawOnChartArea: false },
-                                ticks: { callback: function(value) { return value + '%'; } }
+                                ticks: { 
+                                    color: THEME.target,
+                                    callback: function(value) { return value + '%'; } 
+                                }
                             },
                             x: { 
                                 grid: { display: false },
-                                ticks: { font: { weight: '600' } }
+                                ticks: { 
+                                    color: THEME.text,
+                                    font: { weight: '600' } 
+                                }
                             }
                         }
                     }
