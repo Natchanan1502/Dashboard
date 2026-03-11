@@ -63,12 +63,12 @@
 <body class="antialiased min-h-screen pb-12">
 
     <!-- Chosen Palette: Warm Neutrals with Semantic Accents -->
-    <!-- Application Structure Plan: A single-page dashboard layout. Chosen for efficient quality monitoring. Key update: Added a 'Target' line to the bar chart to provide immediate visual context for performance against quality thresholds. -->
+    <!-- Application Structure Plan: A single-page dashboard layout. Key update: Modified the main visualization from a stacked bar to a double (grouped) bar chart. This allows side-by-side comparison of Production vs Customer volumes while maintaining the Target % line for performance context. -->
     <!-- Visualization & Content Choices: 
-         1. KPIs (HTML/CSS): Core metrics.
-         2. Mixed Bar/Line Chart (Chart.js): Goal: Compare volume while observing targets. Bars show absolute defect counts, while the line shows the Target % threshold on a secondary axis.
-         3. Doughnut Chart (Chart.js): Overall source distribution.
-         4. Data Table (HTML): Granular record tracking.
+         1. KPIs (HTML/CSS): High-level count summaries.
+         2. Grouped Bar + Line Chart (Chart.js): Double bars show absolute counts per source. Line shows percentage threshold on the right Y-axis.
+         3. Doughnut Chart (Chart.js): Relative distribution of source types.
+         4. Data Table (HTML): Detailed data log.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
@@ -78,7 +78,7 @@
             <div>
                 <h1 class="text-3xl font-bold text-stone-900 tracking-tight mb-2">🏭 Quality Defect Tracker</h1>
                 <p class="text-stone-500 max-w-2xl">
-                    Monitoring production and customer defects. The chart below now includes a <span class="text-red-600 font-bold">— Target Line</span> for percentage comparison.
+                    Side-by-side analysis of production and customer defects compared against maximum allowable targets.
                 </p>
             </div>
             <div class="flex flex-col gap-1 min-w-[200px]">
@@ -95,22 +95,22 @@
 
         <section class="mb-8">
             <div class="mb-4">
-                <h2 class="text-xl font-bold text-stone-800">Defect Analysis & Thresholds</h2>
+                <h2 class="text-xl font-bold text-stone-800">Defect Volume Comparison</h2>
                 <p class="text-stone-500 text-sm mt-1">
-                    The bars represent total defect quantities. The red line indicates the <strong>Target % Threshold</strong> for that category.
+                    Grouped bars allow you to compare Production vs Customer quantities for each category. The red line maps to the Target % threshold (Right Axis).
                 </p>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm lg:col-span-2 flex flex-col">
-                    <h3 class="text-sm font-bold text-stone-700 uppercase tracking-wide mb-4">Volume vs. Target Threshold</h3>
+                    <h3 class="text-sm font-bold text-stone-700 uppercase tracking-wide mb-4">Quantity vs. Target %</h3>
                     <div class="chart-container flex-grow">
                         <canvas id="categoryBarChart"></canvas>
                     </div>
                 </div>
 
                 <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex flex-col">
-                    <h3 class="text-sm font-bold text-stone-700 uppercase tracking-wide mb-4">Overall Origin Ratio</h3>
+                    <h3 class="text-sm font-bold text-stone-700 uppercase tracking-wide mb-4">Total Source Mix</h3>
                     <div class="chart-container flex-grow">
                         <canvas id="sourcePieChart"></canvas>
                     </div>
@@ -120,7 +120,7 @@
 
         <section class="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
             <div class="p-5 border-b border-stone-100">
-                <h2 class="text-xl font-bold text-stone-800">Category Detail Tracking</h2>
+                <h2 class="text-xl font-bold text-stone-800">Detailed Metric Log</h2>
             </div>
             <div class="table-scroll overflow-x-auto w-full">
                 <table class="w-full text-left border-collapse whitespace-nowrap">
@@ -225,7 +225,7 @@
         function renderTable() {
             const tbody = document.getElementById('dataTableBody');
             tbody.innerHTML = state.filteredData.length === 0 
-                ? '<tr><td colspan="8" class="p-8 text-center text-stone-500">No data.</td></tr>' 
+                ? '<tr><td colspan="8" class="p-8 text-center text-stone-500">No data available.</td></tr>' 
                 : '';
 
             state.filteredData.forEach(row => {
@@ -281,8 +281,20 @@
                     data: {
                         labels: categoryLabels,
                         datasets: [
-                            { label: 'Prod. Defect', data: prodData, backgroundColor: '#94a3b8', stack: 'stack0', yAxisID: 'y' },
-                            { label: 'Cust. Defect', data: custData, backgroundColor: '#fbbf24', stack: 'stack0', yAxisID: 'y' },
+                            { 
+                                label: 'Production', 
+                                data: prodData, 
+                                backgroundColor: '#94a3b8', 
+                                borderRadius: 4,
+                                yAxisID: 'y' 
+                            },
+                            { 
+                                label: 'Customer', 
+                                data: custData, 
+                                backgroundColor: '#fbbf24', 
+                                borderRadius: 4,
+                                yAxisID: 'y' 
+                            },
                             { 
                                 label: 'Max Target %', 
                                 data: targetData, 
@@ -292,21 +304,34 @@
                                 pointBackgroundColor: '#ef4444',
                                 tension: 0.1, 
                                 yAxisID: 'y1',
-                                fill: false
+                                fill: false,
+                                order: -1 // Keep line on top
                             }
                         ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { position: 'bottom' } },
+                        plugins: { 
+                            legend: { position: 'bottom', labels: { usePointStyle: true } }
+                        },
                         scales: {
-                            y: { beginAtZero: true, title: { display: true, text: 'Defect Qty' } },
+                            y: { 
+                                beginAtZero: true, 
+                                title: { display: true, text: 'Defect Qty', color: '#78716c' },
+                                grid: { color: '#f5f5f4' }
+                            },
                             y1: { 
                                 beginAtZero: true, 
                                 position: 'right', 
-                                title: { display: true, text: 'Target %' },
-                                grid: { drawOnChartArea: false }
+                                title: { display: true, text: 'Target %', color: '#ef4444' },
+                                grid: { drawOnChartArea: false },
+                                ticks: {
+                                    callback: function(value) { return value + '%'; }
+                                }
+                            },
+                            x: {
+                                grid: { display: false }
                             }
                         }
                     }
@@ -322,9 +347,21 @@
                     type: 'doughnut',
                     data: {
                         labels: ['Production', 'Customer'],
-                        datasets: [{ data: [totalProd, totalCust], backgroundColor: ['#94a3b8', '#fbbf24'], borderWidth: 0 }]
+                        datasets: [{ 
+                            data: [totalProd, totalCust], 
+                            backgroundColor: ['#94a3b8', '#fbbf24'], 
+                            borderWidth: 0,
+                            hoverOffset: 4 
+                        }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        cutout: '75%', 
+                        plugins: { 
+                            legend: { position: 'bottom', labels: { usePointStyle: true } } 
+                        } 
+                    }
                 });
             }
         }
