@@ -31,20 +31,20 @@
             height: 8px;
         }
         .table-scroll::-webkit-scrollbar-track {
-            background: #1e293b; 
+            background: #0a0a0a; 
             border-radius: 4px;
         }
         .table-scroll::-webkit-scrollbar-thumb {
-            background: #475569; 
+            background: #333333; 
             border-radius: 4px;
         }
         .table-scroll::-webkit-scrollbar-thumb:hover {
-            background: #64748b; 
+            background: #444444; 
         }
 
         .dark-card {
-            background-color: #111111;
-            border: 1px solid #333333;
+            background-color: #0a0a0a;
+            border: 1px solid #1f1f1f;
         }
 
         .badge {
@@ -56,9 +56,27 @@
             font-weight: 600;
             white-space: nowrap;
         }
-        .badge-critical { background-color: #7f1d1d; color: #fecaca; }
-        .badge-over { background-color: #7c2d12; color: #fed7aa; }
-        .badge-ok { background-color: #064e3b; color: #d1fae5; }
+        .badge-critical { background-color: #450a0a; color: #fecaca; border: 1px solid #7f1d1d; }
+        .badge-over { background-color: #431407; color: #fed7aa; border: 1px solid #7c2d12; }
+        .badge-ok { background-color: #022c22; color: #d1fae5; border: 1px solid #064e3b; }
+
+        /* Custom Table Styling for Black Background */
+        .custom-table {
+            background-color: #000000;
+        }
+        .custom-table thead tr {
+            background-color: #0a0a0a;
+        }
+        .custom-table th {
+            border-bottom: 1px solid #1f1f1f;
+            color: #71717a;
+        }
+        .custom-table td {
+            border-bottom: 1px solid #111111;
+        }
+        .custom-table tr:hover {
+            background-color: #0a0a0a;
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen pb-12">
@@ -74,7 +92,7 @@
             </div>
             <div class="flex flex-col gap-1 min-w-[200px]">
                 <label for="monthFilter" class="text-sm font-semibold text-zinc-500 uppercase tracking-wider">📅 Filter by Month</label>
-                <select id="monthFilter" class="bg-zinc-900 border border-zinc-700 text-white text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 shadow-sm cursor-pointer outline-none transition-all">
+                <select id="monthFilter" class="bg-zinc-950 border border-zinc-800 text-white text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 shadow-sm cursor-pointer outline-none transition-all">
                     <option value="All">All Months</option>
                 </select>
             </div>
@@ -103,25 +121,25 @@
         </section>
 
         <!-- Table Section -->
-        <section class="dark-card rounded-xl shadow-sm overflow-hidden">
-            <div class="p-5 border-b border-zinc-800 bg-zinc-900/50">
+        <section class="dark-card rounded-xl shadow-sm overflow-hidden bg-black">
+            <div class="p-5 border-b border-zinc-800 bg-zinc-950">
                 <h2 class="text-xl font-bold text-zinc-100">Defect Data Log</h2>
             </div>
             <div class="table-scroll overflow-x-auto w-full">
-                <table class="w-full text-left border-collapse whitespace-nowrap">
+                <table class="w-full text-left border-collapse whitespace-nowrap custom-table">
                     <thead>
-                        <tr class="bg-zinc-900 text-zinc-500 text-xs uppercase tracking-wider">
-                            <th class="p-4 font-semibold border-b border-zinc-800">Month</th>
-                            <th class="p-4 font-semibold border-b border-zinc-800">Category</th>
-                            <th class="p-4 font-semibold border-b border-zinc-800 text-right">Prod. Qty</th>
-                            <th class="p-4 font-semibold border-b border-zinc-800 text-right">Cust. Qty</th>
-                            <th class="p-4 font-semibold border-b border-zinc-800 text-right">Total</th>
-                            <th class="p-4 font-semibold border-b border-zinc-800 text-right">Actual %</th>
-                            <th class="p-4 font-semibold border-b border-zinc-800 text-right">Target %</th>
-                            <th class="p-4 font-semibold border-b border-zinc-800">Status</th>
+                        <tr class="text-zinc-500 text-xs uppercase tracking-wider">
+                            <th class="p-4 font-semibold">Month</th>
+                            <th class="p-4 font-semibold">Category</th>
+                            <th class="p-4 font-semibold text-right">Prod. Qty</th>
+                            <th class="p-4 font-semibold text-right">Cust. Qty</th>
+                            <th class="p-4 font-semibold text-right">Total</th>
+                            <th class="p-4 font-semibold text-right">Actual %</th>
+                            <th class="p-4 font-semibold text-right">Target %</th>
+                            <th class="p-4 font-semibold">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="dataTableBody" class="text-sm text-zinc-300 divide-y divide-zinc-800">
+                    <tbody id="dataTableBody" class="text-sm text-zinc-300">
                         <!-- Populated by JS -->
                     </tbody>
                 </table>
@@ -153,10 +171,10 @@
         let barChartInstance = null;
 
         const THEME = {
-            primary: '#3b82f6',   // blue-500
-            secondary: '#60a5fa', // blue-400
-            target: '#f87171',    // red-400
-            grid: '#333333',
+            primary: '#3b82f6',
+            secondary: '#60a5fa',
+            target: '#f87171',
+            grid: '#1f1f1f',
             text: '#94a3b8'
         };
 
@@ -202,20 +220,20 @@
             });
 
             container.innerHTML = `
-                <div class="bg-blue-900/20 p-5 rounded-xl border border-blue-900/50 shadow-sm flex items-center gap-4">
+                <div class="bg-blue-900/20 p-5 rounded-xl border border-blue-900/40 shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl">📦</div>
                     <div><p class="text-sm font-medium text-blue-400">Total Defects</p><p class="text-2xl font-bold text-white">${totalDefects}</p></div>
                 </div>
                 <div class="dark-card p-5 rounded-xl shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-red-900/30 flex items-center justify-center text-xl">⚠️</div>
+                    <div class="w-12 h-12 rounded-full bg-red-900/20 border border-red-900/40 flex items-center justify-center text-xl">⚠️</div>
                     <div><p class="text-sm font-medium text-zinc-500">Critical</p><p class="text-2xl font-bold text-red-500">${criticalCount}</p></div>
                 </div>
                 <div class="dark-card p-5 rounded-xl shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-orange-900/30 flex items-center justify-center text-xl">📈</div>
+                    <div class="w-12 h-12 rounded-full bg-orange-900/20 border border-orange-900/40 flex items-center justify-center text-xl">📈</div>
                     <div><p class="text-sm font-medium text-zinc-500">Over Target</p><p class="text-2xl font-bold text-orange-500">${overCount}</p></div>
                 </div>
                 <div class="dark-card p-5 rounded-xl shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-emerald-900/30 flex items-center justify-center text-xl">✅</div>
+                    <div class="w-12 h-12 rounded-full bg-emerald-900/20 border border-emerald-900/40 flex items-center justify-center text-xl">✅</div>
                     <div><p class="text-sm font-medium text-zinc-500">Target OK</p><p class="text-2xl font-bold text-emerald-500">${okCount}</p></div>
                 </div>
             `;
@@ -230,7 +248,7 @@
                 let badgeClass = statusNorm === 'CRITICAL' ? 'badge-critical' : (statusNorm === 'OVER' ? 'badge-over' : 'badge-ok');
                 
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-zinc-900 transition-colors';
+                tr.className = 'transition-colors';
                 tr.innerHTML = `
                     <td class="p-4 font-medium text-zinc-100">${row.month}</td>
                     <td class="p-4 text-zinc-300">${row.category}</td>
